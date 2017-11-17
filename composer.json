@@ -1,0 +1,24 @@
+{
+    "name": "mootaco/moota-woocommerce",
+    "type": "wordpress-plugin",
+    "license": "GPLv2",
+    "minimum-stability": "stable",
+    "config": {
+        "vendor-dir": "lib/vendor"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/mootaco/php-sdk.git"
+        }
+    ],
+    "require": {
+        "moota/moota-sdk": "1.1.*"
+    },
+    "autoload": {
+        "files": ["functions.php"],
+        "psr-4": {
+            "Moota\\Woocommerce\\": "lib/woocommerce"
+        }
+    }
+}
