@@ -44,7 +44,9 @@ function moota_check_authorize() {
 function moota_warning() {
     ?>
     <div class="update-nag notice" style="display: block;">
-        <p><?php _e( '<b>WooMoota</b> Dalam Mode <b>Testing</b>', 'woomoota' ); ?></p>
+        <p><?php _e(
+            '<b>WooMoota</b> Dalam Mode <b>Testing</b>', 'woomoota'
+        ); ?></p>
     </div>
     <?php
 }
@@ -75,26 +77,61 @@ function moota_make_api() {
     return $api;
 }
 
-function terbilang($n) {
-    $abil = array(
-        "", "satu", "dua", "tiga", "empat", "lima", "enam",
-        "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"
+function moota_rp_format($money, $withCurr = false) {
+
+    $formatted = number_format(
+        $money, 2, ',', '.'
     );
 
-    if ($n < 12)
-        return " " . $abil[$n];
-    elseif ($n < 20)
-        return terbilang($n - 10) . "belas";
-    elseif ($n < 100)
-        return terbilang($n / 10) . " puluh" . terbilang($n % 10);
-    elseif ($n < 200)
-        return " seratus" . terbilang($n - 100);
-    elseif ($n < 1000)
-        return terbilang($n / 100) . " ratus" . terbilang($n % 100);
-    elseif ($n < 2000)
-        return " seribu" . terbilang($n - 1000);
-    elseif ($n < 1000000)
-        return terbilang($n / 1000) . " ribu" . terbilang($n % 1000);
-    elseif ($n < 1000000000)
-        return terbilang($n / 1000000) . " juta" . terbilang($n % 1000000);
+    if ($withCurr) {
+        return 'Rp. ' . $formatted;
+    }
+
+    return $formatted;
+}
+
+/**
+ * @param string $strDate
+ * @param DateTime $date Pass by ref
+ *
+ * @return string
+ */
+function moota_short_date($strDate, &$date) {
+    $date = date_create_from_format('Y-m-d H:i:s', $strDate);
+
+    if (empty($date)) {
+        return '';
+    }
+
+    return $date->format('d/m/Y');
+}
+
+/**
+ * @param DateTime $date
+ *
+ * @return string
+ */
+function moota_human_date(DateTime $date) {
+    static $dayNames;
+    static $monthNames;
+
+    if (empty($dayNames)) {
+        $dayNames = array(
+            'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu',
+        );
+        $monthNames = array(
+            'Jan', 'Peb', 'Mar', 'Apr', 'Mei', 'Juni',
+            'Juli', 'Agt', 'Sept', 'Okt', 'Nop', 'Des',
+        );
+    }
+
+    $zDay = $date->format('d');
+    $year = (int) $date->format('Y');
+    $nDay = (int) $date->format('w');
+    $nMonth = (int) $date->format('n');
+
+    $humanDate =
+        "{$dayNames[ $nDay ]}, {$zDay} {$monthNames[ $nMonth ]}. {$year}";
+
+    return $humanDate;
 }
