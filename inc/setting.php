@@ -12,7 +12,7 @@ class WC_Settings_Tab_Woomota {
     }
 
     public static function add_settings_tab( $settings_tabs ) {
-        $settings_tabs['setting_tab_woomoota'] = __( 'WooMoota', 'woomoota' );
+        $settings_tabs['setting_tab_woomoota'] = ___('WooMoota');
 
         return $settings_tabs;
     }
@@ -30,109 +30,124 @@ function woomota_settings_tab() {
 function get_woomoota_settings() {
     $settings = array(
         'section_title' => array(
-            'name'     => __( 'Pengaturan API Key & Nomor Unik Pesanan', 'woomoota' ),
-            'type'     => 'title',
-            'desc'     => '',
-            'id'       => 'woomoota_settings_label'
+            'name' => ___('Pengaturan API Key & Nomor Unik Pesanan'),
+            'type' => 'title',
+            'desc' => '',
+            'id' => 'woomoota_settings_label'
         ),
         'mode' => array(
-            'name' => __( 'Mode', 'woomoota' ),
+            'name' => ___('Mode'),
             'type' => 'select',
-            'desc' => __( 'Pilih Mode', 'woomoota' ),
-            'default'   =>  'testing',
+            'desc' => _desc('Pilih Mode'),
+            'default' =>  'testing',
             'options' => array(
-                'testing'       => 'Testing',
-                'production'    => 'Production'
+                'testing' => 'Testing',
+                'production' => 'Production'
             ),
-            'id'   => 'woomoota_mode'
+            'id' => 'woomoota_mode'
         ),
         'api_endpoint' => array(
-            'name'              => __( 'API Endpoint', 'woomoota' ),
-            'type'              => 'text',
-            'css'               => 'min-width:420px;',
-            'default'           => add_query_arg( 'woomoota', 'push', get_bloginfo('url') . '/' ),
-            'desc'              => __( 'Masukan URL ini kedalam pengaturan Push Notification', 'woomoota' ),
-            'id'                => 'woomoota_api_endpoint',
+            'name' => ___('API Endpoint'),
+            'type' => 'text',
+            'css' => 'min-width:420px;',
+            'default' => add_query_arg(
+                'woomoota', 'push', get_bloginfo('url') . '/'
+            ),
+            'desc' => _desc(
+                'Masukan URL ini kedalam pengaturan Push Notification'
+            ),
+            'id' => 'woomoota_api_endpoint',
             'custom_attributes' => array(
-                'disabled'  => true
+                'disabled' => true
             )
         ),
         'api_key' => array(
-            'name' => __( 'API Key', 'woomoota' ),
+            'name' => ___('API Key'),
             'type' => 'text',
-            'css'      => 'min-width:420px;',
-            'desc' => __( 'Dapatkan API Key melalui : <a href="https://app.moota.co/settings?tab=api" target="_new">https://app.moota.co/settings?tab=api</a>', 'woomoota' ),
-            'id'   => 'woomoota_api_key'
+            'css' => 'min-width:420px;',
+            'desc' => _desc(
+            'Dapatkan API Key melalui : '
+                    . '<a href="https://app.moota.co/settings?tab=api" '
+                    . 'target="_new">https://app.moota.co/settings?tab=api</a>'
+            ),
+            'required' => true,
+            'id' => 'woomoota_api_key'
         ),
         'success_status' => array(
-            'name' => __( 'Status Berhasil', 'woomoota' ),
+            'name' => ___('Status Berhasil'),
             'type' => 'select',
-            'desc' => __( 'Status setelah berhasil menemukan order yang telah dibayar', 'woomoota' ),
-            'default'   =>  'processing',
-            'options' => array(
-                'completed'     => 'Completed',
-                'on-hold'       => 'On Hold',
-                'processing'    => 'Processing'
+            'desc' => _desc(
+                'Status setelah berhasil menemukan order yang telah dibayar'
             ),
-            'id'   => 'woomoota_success_status'
+            'default' =>  'processing',
+            'options' => array(
+                'completed' => 'Completed',
+                'on-hold' => 'On Hold',
+                'processing' => 'Processing'
+            ),
+            'id' => 'woomoota_success_status'
         ),
-        'range_order' => array(
-            'name' => __( 'Batas lama pengecekkan invoice', 'woomoota' ),
+        'oldest_order' => array(
+            'name' => ___('Batas lama pengecekkan order'),
             'type' => 'number',
-            'desc' => __( 'Pengecekkan invoice berdasarkan x hari ke belakang (default: 7 hari kebelakang)', 'woomoota' ),
-            'id'   => 'woomoota_range_order',
+            'desc' => _desc(
+            'Pengecekkan order berdasarkan x hari ke belakang '
+                    . '(default: 7 hari kebelakang)'
+            ),
+            'id' => 'woomoota_oldest_order',
             'default' => 7,
             'custom_attributes' => array(
-                'min'  => 1,
-                'max'  => 31
+                'min' => 1,
+                'max' => 31
             )
         ),
-        'toggle_status' => array(
-            'name' => __( 'Nomor Unik ?', 'woomoota' ),
+        'use_uq' => array(
+            'name' => ___('Nomor Unik ?'),
             'type' => 'checkbox',
-            'desc' => __( 'Centang, untuk aktifkan fitur penambahan 3 angka unik di setiap akhir pesanan / order. Sebagai pembeda dari order satu dengan yang lainnya.', 'woomoota' ),
-            'id'   => 'woomoota_toggle_status'
+            'desc' => ___(
+            'Centang, untuk aktifkan fitur penambahan 3 angka unik di '
+                    . 'setiap akhir pesanan / order. Sebagai pembeda dari '
+                    . 'order satu dengan yang lainnya.'
+            ),
+            'id' => 'woomoota_use_uq'
         ),
-        'label_unique' => array(
-            'name' => __( 'Label Kode Unik', 'woomoota' ),
+        'uq_label' => array(
+            'name' => ___('Label Kode Unik'),
             'type' => 'text',
             'default' => 'Kode Unik',
-            'css'      => 'min-width:420px;',
-            'desc' => __( 'Label yang akan muncul di form checkout', 'woomoota' ),
-            'id'   => 'woomoota_label_unique'
+            'css' => 'min-width:420px;',
+            'desc' => _desc('Label yang akan muncul di form checkout'),
+            'id' => 'woomoota_uq_label'
         ),
-        'type_append' => array(
-            'name' => __( 'Tipe Tambahan', 'woomoota' ),
+        'uq_mode' => array(
+            'name' => ___('Tipe Kode Unik'),
             'type' => 'select',
-            'desc' => __( 'Increase = Menambah unik number ke total harga, Decrease = Mengurangi total harga dengan unik number', 'woomoota' ),
-            'default'   =>  'increase',
-            'options' => array(
-                'increase'      => 'Tambahkan',
-                'decrease'      => 'Kurangi'
+            'desc' => _desc(
+            'Increase = Menambah unik number ke total harga, '
+                    . 'Decrease = Mengurangi total harga dengan unik number'
             ),
-            'id'   => 'woomoota_type_append'
+            'default' =>  'increase',
+            'options' => array(
+                'increase' => 'Tambahkan',
+                'decrease' => 'Kurangi'
+            ),
+            'id' => 'woomoota_uq_mode'
         ),
-        'unique_start' => array(
-            'name' => __( 'Batas Awal Angka Unik', 'woomoota' ),
+        'uq_min' => array(
+            'name' => ___('Angka Unik - Minimum'),
             'type' => 'number',
-            'desc' => __( 'Masukan batas awal angka unik', 'woomoota' ),
-            'id'   => 'woomoota_start_unique_number',
+            'desc' => _desc('Masukan nilai Minimum angka unik'),
+            'id' => 'woomoota_uq_min',
             'default' => 1,
-            'custom_attributes' => array(
-                'min'  => 1,
-                'max'  => 999,
-            )
+            'custom_attributes' => array( 'min' => 1, 'max' => 999 )
         ),
-        'unique_end' => array(
-            'name' => __( 'Batas Akhir Angka Unik', 'woomoota' ),
+        'uq_max' => array(
+            'name' => ___('Angka Unik - Maksimum'),
             'type' => 'number',
-            'desc' => __( 'Masukan batas akhir angka unik', 'woomoota' ),
-            'id'   => 'woomoota_end_unique_number',
+            'desc' => _desc('Masukan nilai Maksimum angka unik'),
+            'id' => 'woomoota_uq_max',
             'default' => 999,
-            'custom_attributes' => array(
-                'min'  => 1,
-                'max'  => 999,
-            )
+            'custom_attributes' => array( 'min' => 1, 'max' => 999 )
         ),
         'section_end' => array(
             'type' => 'sectionend',
@@ -140,14 +155,14 @@ function get_woomoota_settings() {
         )
     );
 
-    return apply_filters( 'wc_setting_tab_woomoota_settings', $settings );
+    return apply_filters('wc_setting_tab_woomoota_settings', $settings);
 }
 
 add_action(
     'woocommerce_update_options_setting_tab_woomoota',
-    'woo_moota_update_settings'
+    'woomoota_update_settings'
 );
 
-function woo_moota_update_settings() {
+function woomoota_update_settings() {
     woocommerce_update_options(get_woomoota_settings());
 }

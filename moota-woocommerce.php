@@ -12,9 +12,9 @@ License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
 
-include_once 'inc/setting.php';
-
 include_once 'lib/vendor/autoload.php';
+
+include_once 'inc/setting.php';
 
 include_once 'hooks/moota.php';
 include_once 'hooks/admin-menu.php';
