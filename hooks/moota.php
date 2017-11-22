@@ -1,5 +1,11 @@
 <?php
 
+use Moota\SDK\PushCallbackHandler;
+use Moota\Woocommerce\OrderFetcher;
+use Moota\Woocommerce\OrderMatcher;
+use Moota\Woocommerce\OrderFulfiller;
+use Moota\Woocommerce\DuplicateFinder;
+
 add_action(
     'woocommerce_cart_calculate_fees','woocommerce_woomoota_surcharge'
 );
@@ -32,14 +38,15 @@ function woocommerce_woomoota_surcharge() {
     $woocommerce->cart->add_fee($uqLabel, $unique, true, '');
 }
 
-add_action('wp_loaded', 'moota_notification_handler');
+add_action('wp_loaded', 'moota_loaded');
 
 /**
  * Moota Notification Handler
  */
-function moota_notification_handler() {
+function moota_loaded() {
     if ( !class_exists( 'WooCommerce' ) ) {
         add_action( 'admin_notices', 'moota_wc_warning' );
+
         return;
     }
 
@@ -47,12 +54,29 @@ function moota_notification_handler() {
         add_action( 'admin_notices', 'moota_warning' );
     }
 
-    if (
-        !array_key_exists('woomoota', $_GET)
-        || $_GET['woomoota'] != 'push'
-    ) {
-        return;
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (
+            array_key_exists('woomoota', $_GET)
+            && $_GET['woomoota'] == 'push'
+        ) {
+            moota_handle_push();
+        }
     }
 
-    wp_send_json($results);
+}
+
+function moota_handle_push() {
+    moota_init_sdk_config();
+
+    $handler = PushCallbackHandler::createDefault()
+        ->setOrderFetcher(new OrderFetcher)
+        ->setOrderMatcher(new OrderMatcher)
+        ->setOrderFulfiller(new OrderFulfiller)
+        ->setDupeFinder(new DuplicateFinder)
+    ;
+
+    $statusData = $handler->handle();
+    $statusCode = PushCallbackHandler::statusDataToHttpCode($statusData);
+
+    wp_send_json($statusData, $statusCode);
 }

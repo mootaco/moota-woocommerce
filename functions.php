@@ -1,6 +1,6 @@
 <?php
 
-use Moota\SDK\Config as MootaConfig;
+include_once 'lib/vendor/autoload.php';
 
 function curr_user_is_admin() {
     if (empty( $user = wp_get_current_user() )) {
@@ -79,12 +79,10 @@ function moota_wc_warning() {
 }
 
 function moota_init_sdk_config() {
-    if (empty(MootaConfig::$apiKey)) {
-        MootaConfig::fromArray(array(
-            'apiKey' => moota_get_option('api_key'),
-            'apiTimeout' => 180, // 5 minutes
-            'sdkMode' => moota_get_option('mode'),
-        ));
+    if (empty(Moota\SDK\Config::$apiKey)) {
+        Moota\SDK\Config::fromArray(
+            moota_opts_to_config(moota_populate_options(true))
+        );
     }
 }
 
@@ -194,6 +192,7 @@ function moota_populate_options($refresh = null) {
 function moota_opts_to_config($opts) {
     return array(
         'apiKey' => $opts['api_key'],
+        'apiTimeout' => 180, // 5 minutes
         'sdkMode' => $opts['mode'],
         'uqMin' => $opts['uq_min'],
         'uqMode' => $opts['uq_mode'] === 'yes' ? true : false,
