@@ -1,5 +1,6 @@
 <?php namespace Moota\Woocommerce;
 
+use Moota\SDK\Config as MootaConfig;
 use Moota\SDK\Contracts\Push\FindsDuplicate;
 
 class DuplicateFinder implements FindsDuplicate
@@ -7,73 +8,92 @@ class DuplicateFinder implements FindsDuplicate
     public function findDupes(array &$mootaInflows, array &$orders)
     {
         $dupes = array();
-        $tmpOrders = array();
         $dupedOrderIds = array();
+        $idsToRemove = array();
+        $dupedCount = 0;
 
+        // for each inflow, find all orders that has the same total
         foreach ($mootaInflows as $inflow) {
-            $amount = (float) $inflow['amount'];
-
-            if (empty($dupes[ ($inflow['amount'] . '') ])) {
-                $dupes[ ($inflow['amount'] . '') ] = array();
-            }
-
-            $currDupes = $dupes[ ($inflow['amount'] . '') ];
-
-            foreach ($orders as $order) {
-                if ( ((float) $order->total) === $amount ) {
-                    $currDupes[] = $order;
-                }
-            }
-
-            $dupes[ ($inflow['amount'] . '') ] = $currDupes;
-        }
-
-        foreach ($dupes as $amount => $dupedOrders) {
-            if (count($dupedOrders) < 2) {
+            if (
+                !empty($inflow['tags'])
+                && !empty($inflow['tags']['order_id'])
+            ) {
                 continue;
             }
 
-            // Send notification to admin
-            $adminEmail = get_bloginfo('admin_email');
+            $dupeKey = $inflow['amount'] . '';
 
-            $orderIds = array();
-            array_walk(
-                $dupedOrders,
-                function ($item, $idx) use ($orderIds, $dupedOrderIds) {
-                    $orderIds[] = $item->ID;
-                    $dupedOrderIds[] = $item->ID;
+            $dupes[ $dupeKey ] = array_filter($orders, function ($order) use (
+                $inflow, &$dupedOrderIds, $dupeKey
+            ) {
+                /** @var \WC_Order $order */
+                $isDuped =
+                    (float) $order->get_total() === (float) $inflow['amount'];
+
+                // group ids from orders with the same amount
+                if ($isDuped) {
+                    if ( ! isset($dupedOrderIds[ $dupeKey ]) ) {
+                        $dupedOrderIds[ $dupeKey ] = array();
+                    }
+
+                    $dupedOrderIds[ $dupeKey ][] = $order->get_id();
                 }
-            );
 
-            $orderIds = implode(',', $orderIds);
+                return $isDuped;
+            });
+        }
 
-            $message = __('Hai Admin.') . PHP_EOL . PHP_EOL;
+        $message = '';
+
+        foreach ($dupedOrderIds as $amount => $orderIds) {
+            if (count($orderIds) <= 1) {
+                continue;
+            }
+
+            $idsToRemove = array_merge($idsToRemove, $orderIds);
+
+            $dupedCount += count($orderIds) - 1;
+
+            $message .= PHP_EOL . sprintf(
+                __('Ada order yang sama untuk nominal %s'),
+                moota_rp_format( (float) $amount, true )
+            ) . PHP_EOL;
 
             $message .= sprintf(
-                __('Ada order yang sama, dengan nominal %s'),
-                moota_rp_format( (float) $amount )
-            ) . PHP_EOL . PHP_EOL;
+                    __('Berikut Order ID yang bersangkutan: %s'),
 
-            $message .= __(
-                'Berikut Order ID yang bersangkutan: [%s].',
-                $orderIds
-            ) . PHP_EOL . PHP_EOL;
+                    PHP_EOL . '- ' . implode(PHP_EOL . '- ', $orderIds)
+                )
+                . PHP_EOL . PHP_EOL;
+        }
 
+        if ($dupedCount > 0) {
+            $message = __('Hai Admin.') . PHP_EOL . PHP_EOL . $message;
             $message .= __('Mohon dicek manual.') . PHP_EOL
                 . PHP_EOL;
 
-            wp_mail($adminEmail, sprintf(
-                __('[%s] Ada nominal order yang sama - Moota'),
-                get_option('blogname')
-            ), $message);
-        }
-
-        foreach ($orders as $order) {
-            if ( ! in_array($order->ID, $dupedOrderIds) ) {
-                $tmpOrders[] = $order;
+            if ( MootaConfig::isLive() ) {
+                wp_mail(
+                    get_bloginfo('admin_email'),
+                    sprintf(
+                        __('[%s] Ada nominal order yang sama - Moota'),
+                        get_option('blogname')
+                    ),
+                    $message
+                );
             }
         }
 
-        $orders = $tmpOrders;
+        // change the duplicates in $orders into nulls
+        foreach ($orders as $idx => $order) {
+            if ( !empty($order) && in_array($order->get_id(), $idsToRemove) ) {
+                $orders[ $idx ] = null;
+            }
+        }
+
+        // filter out all nulls;
+        $orders = array_filter($orders);
+
+        return $orders;
     }
 }

@@ -78,10 +78,12 @@ function moota_wc_warning() {
     <?php
 }
 
-function moota_init_sdk_config() {
+function moota_init_sdk_config($refresh = null) {
+    $refresh = $refresh ?: false;
+
     if (empty(Moota\SDK\Config::$apiKey)) {
         Moota\SDK\Config::fromArray(
-            moota_opts_to_config(moota_populate_options(true))
+            moota_opts_to_config(moota_populate_options($refresh))
         );
     }
 }
@@ -89,7 +91,9 @@ function moota_init_sdk_config() {
 function moota_make_api() {
     moota_init_sdk_config();
 
-    $api = new Moota\SDK\Api;
+    static $api;
+
+    if (empty($api)) $api = new Moota\SDK\Api;
 
     return $api;
 }
