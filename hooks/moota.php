@@ -80,3 +80,16 @@ function moota_handle_push() {
 
     wp_send_json($statusData, $statusCode);
 }
+
+add_filter('woocommerce_admin_order_actions', function ($actions) {
+    $actions['capture_payment'] = array(
+        'action' => 'capture_payment',
+        'url' => get_admin_url(
+            null,
+            'post.php?post='. get_the_ID() .'&action=capture-payment'
+        ),
+        'name' => 'Capture Payment',
+    );
+
+    return $actions;
+});
