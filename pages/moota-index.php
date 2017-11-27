@@ -21,8 +21,7 @@
 
             <?php
             $count = 0;
-            $selectedBank = $_GET['bank'];
-
+            $selectedBank = isset($_GET['bank']) ? $_GET['bank'] : '';
 
             foreach ($banks['data'] as $bank):
             ?>
@@ -85,13 +84,13 @@
 
                 <td><?php echo (
                     $t['type'] === 'CR' ? 'Credit' : 'Debit'
-                    ); ?></td>
+                ); ?></td>
 
                 <td class="money">
                     <span>Rp.</span>
                     <span class="amount"><?php
                         echo moota_rp_format($t['amount'], false);
-                        ?></span>
+                    ?></span>
                 </td>
 
                 <td class="column-title column-primary page-title"

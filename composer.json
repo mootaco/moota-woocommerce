@@ -14,7 +14,7 @@
     ],
     "require": {
         "php": ">= 5.3.0",
-        "moota/moota-sdk": "dev-master"
+        "moota/moota-sdk": "1.1.*"
     },
     "autoload": {
         "files": ["functions.php"],

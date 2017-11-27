@@ -119,8 +119,8 @@ function moota_rp_format($money, $withCurr = false) {
 function moota_short_date($strDate, &$date) {
     $date = date_create_from_format('Y-m-d H:i:s', $strDate);
 
-    if (empty($date)) {
-        return '';
+    if (empty($date) || false === $date) {
+        return $strDate;
     }
 
     return $date->format('d/m/Y');
@@ -131,7 +131,11 @@ function moota_short_date($strDate, &$date) {
  *
  * @return string
  */
-function moota_human_date(DateTime $date) {
+function moota_human_date($date) {
+    if ( empty($date) || ! is_a($date, \DateTime::class) ) {
+        return '';
+    }
+
     static $dayNames;
     static $monthNames;
 
