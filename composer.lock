@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "81218789ba3490d71a8dd45dc1b27f21",
+    "content-hash": "056456020f3c5d4fa4bcc90c72e91260",
     "packages": [
         {
             "name": "composer/installers",
-            "version": "v1.4.0",
+            "version": "v1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/installers.git",
-                "reference": "9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b"
+                "reference": "049797d727261bf27f2690430d935067710049c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/installers/zipball/9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b",
-                "reference": "9ce17fb70e9a38dd8acff0636a29f5cf4d575c1b",
+                "url": "https://api.github.com/repos/composer/installers/zipball/049797d727261bf27f2690430d935067710049c2",
+                "reference": "049797d727261bf27f2690430d935067710049c2",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
             },
             "require-dev": {
                 "composer/composer": "1.0.*@dev",
-                "phpunit/phpunit": "4.1.*"
+                "phpunit/phpunit": "^4.8.36"
             },
             "type": "composer-plugin",
             "extra": {
@@ -100,15 +100,18 @@
                 "lavalite",
                 "lithium",
                 "magento",
+                "majima",
                 "mako",
                 "mediawiki",
                 "modulework",
+                "modx",
                 "moodle",
                 "osclass",
                 "phpbb",
                 "piwik",
                 "ppi",
                 "puppet",
+                "pxcms",
                 "reindex",
                 "roundcube",
                 "shopware",
@@ -121,7 +124,7 @@
                 "zend",
                 "zikula"
             ],
-            "time": "2017-08-09T07:53:48+00:00"
+            "time": "2017-12-29T09:13:20+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -303,16 +306,16 @@
         },
         {
             "name": "moota/moota-sdk",
-            "version": "1.1.0",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mootaco/php-sdk.git",
-                "reference": "52de2c69182ec0ce7c593907a3b6a883ece59d74"
+                "reference": "781477b24b1dd654674e07d8283f72c6bb7a3fc7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mootaco/php-sdk/zipball/52de2c69182ec0ce7c593907a3b6a883ece59d74",
-                "reference": "52de2c69182ec0ce7c593907a3b6a883ece59d74",
+                "url": "https://api.github.com/repos/mootaco/php-sdk/zipball/781477b24b1dd654674e07d8283f72c6bb7a3fc7",
+                "reference": "781477b24b1dd654674e07d8283f72c6bb7a3fc7",
                 "shasum": ""
             },
             "require": {
@@ -361,10 +364,10 @@
             ],
             "description": "PHP SDK for moota.co",
             "support": {
-                "source": "https://github.com/mootaco/php-sdk/tree/1.1.0",
+                "source": "https://github.com/mootaco/php-sdk/tree/1.1.1",
                 "issues": "https://github.com/mootaco/php-sdk/issues"
             },
-            "time": "2017-11-13T06:45:16+00:00"
+            "time": "2017-12-12T03:41:32+00:00"
         },
         {
             "name": "psr/http-message",
@@ -423,6 +426,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">= 5.3.0"
+    },
     "platform-dev": []
 }

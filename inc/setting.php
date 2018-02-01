@@ -54,7 +54,9 @@ function get_woomoota_settings() {
                 'woomoota', 'push', get_bloginfo('url') . '/'
             ),
             'desc' => _desc(
-                'Masukan URL ini kedalam pengaturan Push Notification'
+                'Masuk halaman edit bank di moota > tab notifikasi '
+                    . '> edit "API Push Notif" '
+                    . '> lalu masukkan url ini'
             ),
             'id' => 'woomoota_api_endpoint',
             'custom_attributes' => array(

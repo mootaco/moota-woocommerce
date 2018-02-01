@@ -209,6 +209,44 @@ function moota_opts_to_config($opts) {
     );
 }
 
+function moota_get_on_hold_uqcodes () {
+    global $wpdb;
+
+    $uqLabel = moota_get_option('uq_label', 'Kode Unik Moota');
+    $uqMax = moota_get_option('uq_max', 999);
+
+    $sql = <<<EOF
+SELECT p.`ID`, oi.`order_item_id`, oim.`meta_value` `unique_code`
+FROM `{$wpdb->prefix}posts` p
+LEFT JOIN `{$wpdb->prefix}woocommerce_order_items` oi
+  ON (
+    oi.`order_id` = p.`ID`
+    AND oi.`order_item_type` = 'fee'
+    AND oi.`order_item_name` = '{$uqLabel}'
+  )
+LEFT JOIN `{$wpdb->prefix}woocommerce_order_itemmeta` oim
+  ON (
+    oim.`order_item_id` = oi.`order_item_id`
+    AND oim.`meta_key` = '_fee_amount'
+  )
+WHERE `post_type`='shop_order'
+  AND `post_status` NOT IN (
+    'wc-completed', 'wc-cancelled', 'wc-refunded', 'wc-failed'
+  )
+LIMIT 0, {$uqMax}
+EOF;
+
+    $results = $wpdb->get_results($sql, OBJECT);
+
+    $uqCodes = [];
+
+    foreach ($results as $meta) {
+        $uqCodes[] = $meta->unique_code;
+    }
+
+    return $uqCodes;
+}
+
 function ___($text) {
     return __($text, 'woomota');
 }

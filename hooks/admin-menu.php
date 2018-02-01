@@ -1,6 +1,6 @@
 <?php
 
-add_action('admin_menu', function () {
+add_action('___MOOTA_DISABLED___admin_menu', function () {
     add_menu_page(
         // page_title
         'Moota',

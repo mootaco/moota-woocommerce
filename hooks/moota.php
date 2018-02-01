@@ -3,7 +3,7 @@
 use Moota\SDK\PushCallbackHandler;
 use Moota\Woocommerce\OrderFetcher;
 use Moota\Woocommerce\OrderMatcher;
-use Moota\Woocommerce\OrderFulfiller;
+use Moota\Woocommerce\OrderFullfiler;
 use Moota\Woocommerce\DuplicateFinder;
 
 add_action(
@@ -24,18 +24,29 @@ function woocommerce_woomoota_surcharge() {
         return;
     }
 
-    $unique = mt_rand(
-        moota_get_option('uq_min', 1),
-        moota_get_option('uq_max', 999)
-    );
+    $uqCodes = moota_get_on_hold_uqcodes();
 
-    if ( moota_get_option('uq_mode', 'increase') == 'decrease' ) {
-        $unique = (int) -$unique;
+    $unique = null;
+    $loopCount = 0;
+
+    while (empty($unique) && ++$loopCount < 10) {
+        $unique = mt_rand(
+            moota_get_option('uq_min', 1),
+            moota_get_option('uq_max', 999)
+        );
+
+        $unique = !empty($uqCodes) && in_array($unique, $uqCodes) ? null : $unique;
     }
 
-    $uqLabel = moota_get_option('uq_label', 'Diskon');
+    if (!empty($unique)) {
+        if ( moota_get_option('uq_mode', 'increase') == 'decrease' ) {
+            $unique = (int) -$unique;
+        }
 
-    $woocommerce->cart->add_fee($uqLabel, $unique, true, '');
+        $uqLabel = moota_get_option('uq_label', 'Kode Unik Moota');
+
+        $woocommerce->cart->add_fee($uqLabel, $unique, true, '');
+    }
 }
 
 add_action('wp_loaded', 'moota_loaded');
@@ -71,7 +82,7 @@ function moota_handle_push() {
     $handler = PushCallbackHandler::createDefault()
         ->setOrderFetcher(new OrderFetcher)
         ->setOrderMatcher(new OrderMatcher)
-        ->setOrderFulfiller(new OrderFulfiller)
+        ->setOrderFulfiller(new OrderFullfiler)
         ->setDupeFinder(new DuplicateFinder)
     ;
 
@@ -81,7 +92,9 @@ function moota_handle_push() {
     wp_send_json($statusData, $statusCode);
 }
 
-add_filter('___MOOTA_DISABLED___woocommerce_admin_order_actions', function ($actions) {
+add_filter('___MOOTA_DISABLED___woocommerce_admin_order_actions', function (
+    $actions
+) {
     $actions['capture_payment'] = array(
         'action' => 'capture_payment',
         'url' => get_admin_url(

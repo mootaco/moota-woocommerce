@@ -1,7 +1,8 @@
 {
     "name": "mootaco/moota-woocommerce",
+    "description": "moota.co plugin for WooCommerce",
     "type": "wordpress-plugin",
-    "license": "GPLv2",
+    "license": "GPL-2.0+-only",
     "minimum-stability": "stable",
     "config": {
         "vendor-dir": "lib/vendor"
