@@ -2,7 +2,7 @@
 
 use Moota\SDK\Contracts\Push\FulfillsOrder;
 
-class OrderFullfiler implements FulfillsOrder
+class OrderFulfiller implements FulfillsOrder
 {
     public function fulfill($order)
     {

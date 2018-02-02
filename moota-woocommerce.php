@@ -16,5 +16,18 @@ include_once 'lib/vendor/autoload.php';
 
 include_once 'inc/setting.php';
 
-include_once 'hooks/moota.php';
-include_once 'hooks/admin-menu.php';
+use Moota\Woocommerce\Hooks;
+
+add_action('woocommerce_cart_calculate_fees', [Hooks::class, 'surcharge']);
+
+add_action('wp_loaded', [Hooks::class, 'wpLoaded']);
+
+// doesn't work as of woocommerce 3.3, dunno why
+add_filter(
+    '__MOOTA_DISABLED__woocommerce_admin_order_actions',
+    [Hooks::class, 'adminOrderActions'],
+    10, // execution order
+    1 // number of params
+);
+
+add_action('admin_menu', [Hooks::class, 'adminMenu']);

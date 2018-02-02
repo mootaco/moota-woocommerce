@@ -56,7 +56,6 @@ class OrderMatcher implements MatchesOrders
                             $tmpPayment['tag']['order_id'];
                     }
 
-
                     $matchedPayments[]  = $payment;
                 }
             }
