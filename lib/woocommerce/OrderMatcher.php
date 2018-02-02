@@ -12,7 +12,7 @@ class OrderMatcher implements MatchesOrders
 
         $guardedPayments = $mootaInflows;
 
-        if ( ! empty($orders) && count($orders) > 0 ) {
+        if (! empty($orders) && count($orders) > 0) {
             // match woocommerce orders with moota transactions
             foreach ($orders as $order) {
                 $transAmount = (float) $order->get_total();

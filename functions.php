@@ -2,6 +2,19 @@
 
 include_once 'lib/vendor/autoload.php';
 
+function moota_debug ($data, $display = false) {
+    if ($display) {
+        echo '<pre><code>', var_export($data),'</code></pre>';
+        return;
+    }
+
+    @file_put_contents(
+        ABSPATH . 'debug.log',
+        json_encode($data, JSON_PRETTY_PRINT) . PHP_EOL,
+        FILE_APPEND
+    );
+}
+
 function curr_user_is_admin() {
     if (empty( $user = wp_get_current_user() )) {
         return false;

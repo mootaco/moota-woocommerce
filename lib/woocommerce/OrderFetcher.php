@@ -16,15 +16,18 @@ class OrderFetcher implements FetchesOrders
                     'column' =>  'post_date_gmt',
                     'after' =>  $oldestOrder . ' days ago'
                 )
-            )
+            ),
         );
+
+        foreach ($inflowAmounts as $idx => $inflowAmount) {
+            $inflowAmounts[ $idx ] = number_format((float) $inflowAmount, 2);
+        }
 
         if ( !empty($inflowAmounts) && count($inflowAmounts) > 0 ) {
             $queryArgs['meta_query'] = array(
                 array(
                     'key' => '_order_total',
                     'value' => $inflowAmounts,
-                    'type' => 'numeric',
                     'compare' => 'IN',
                 ),
             );
@@ -32,9 +35,12 @@ class OrderFetcher implements FetchesOrders
 
         $tmpOrders = (new \WP_Query($queryArgs))->get_posts();
         $orders = array();
+        $dbgOrders = [];
 
         foreach ($tmpOrders as $tmpOrder) {
-            $orders[] = new \WC_Order($tmpOrder->ID);
+            $tmp = new \WC_Order($tmpOrder->ID);
+            $orders[] = $tmp;
+            $dbgOrders[] = (array) $tmp;
         }
 
         return $orders;
